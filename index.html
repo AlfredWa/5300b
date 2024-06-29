@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Classification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f9;
+            margin: 20px;
+            padding: 20px;
+            color: #333;
+        }
+        h1, h2 {
+            color: #5a5a5a;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        img {
+            margin-top: 20px;
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        #results {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload an Image for Classification</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="imageInput" name="file" accept="image/*" required onchange="previewImage();">
+        <button type="button" onclick="uploadImage()">Classify Image</button>
+    </form>
+
+    <h2>Image Preview:</h2>
+    <img id="imagePreview" src="" alt="Image preview..." style="display: none;"/>
+
+    <h2>Results:</h2>
+    <div id="results"></div>
+
+    <script>
+        function previewImage() {
+            var file = document.getElementById('imageInput').files[0];
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var img = document.getElementById('imagePreview');
+                img.src = e.target.result;
+                img.style.display = 'block';  // Make the image visible
+            };
+            reader.readAsDataURL(file);  // Convert the image to a data URL
+        }
+
+        function uploadImage() {
+            var form = document.getElementById('uploadForm');
+            var formData = new FormData(form);
+
+            fetch(' https://24ac-149-248-191-233.ngrok-free.app/predict', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('results').innerHTML = 'Class Name: ' + data.class_name +
+                                                               ', Confidence: ' + data.confidence.toFixed(2);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('results').innerHTML = 'Error: ' + error.toString();
+            });
+        }
+    </script>
+</body>
+</html>
