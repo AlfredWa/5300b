@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Load the model
-model = load_model('base_model.h5')
+model = load_model('/Users/Home/Desktop/5300b/5300b/base_model.h5')
 name_list = {0: 'airplane', 1: 'automobile', 2: 'bird', 3: 'cat', 4: 'deer', 5: 'dog', 6: 'frog', 7: 'horse', 8: 'ship', 9: 'truck'}
 
 @app.route('/predict', methods=['POST'])
